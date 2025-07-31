@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+  finalizers: []
+spec:
+  destination:
+    namespace: app-nginx
+    server: https://kubernetes.default.svc
+  source:
+    path: infra/kube
+    repoURL: https://github.com/barnabe-josepavel/test-argo-cd
+    targetRevision: master
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
