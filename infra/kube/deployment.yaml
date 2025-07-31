@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: app-nginx
-          image: rg.fr-par.scw.cloud/test-custom-image-argo-cd/app:1.0.1
+          image: rg.fr-par.scw.cloud/test-custom-image-argo-cd/app:1.0.3
           ports:
             - containerPort: 80
           resources:
