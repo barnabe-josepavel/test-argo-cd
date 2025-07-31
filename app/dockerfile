@@ -1,0 +1,4 @@
+FROM nginx:latest
+
+# Copy custom index.html to nginx html directory
+COPY index.html /usr/share/nginx/html/index.html

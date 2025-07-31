@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-nginx-ingress
+  namespace: app-nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/security-headers: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - www.trainingscalcloud.com
+      secretName: www.trainingscalcloud.com-tls
+  rules:
+    - host: www.trainingscalcloud.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-nginx-service
+                port:
+                  number: 80
