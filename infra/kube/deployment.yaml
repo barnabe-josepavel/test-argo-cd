@@ -20,11 +20,11 @@ spec:
           ports:
             - containerPort: 80
           env:
-            - name: MY_SECRET
+            - name: my-secret 
               valueFrom:
                 secretKeyRef:
-                  name: MY_SECRET
-                  key: MY_SECRET
+                  name: my-secret
+                  key: my-secret 
           resources:
             requests:
               memory: 100Mi
