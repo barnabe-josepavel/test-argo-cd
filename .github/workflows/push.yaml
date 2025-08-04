@@ -61,6 +61,7 @@ jobs:
             SECRET_NAME=$(echo "$SECRETS_NAMES" | jq -r ".[$i]")
             echo "SECRET_NAME: $SECRET_NAME"
             SECRET_DATA=$(scw secret version access $SECRET_UUID revision=latest raw=true)
+            echo "Found secret data"
             kubectl create secret generic "$SECRET_NAME" \
                 --from-literal=MY_SECRET="$SECRET_DATA" \
                 --namespace="$NAMESPACE" \
