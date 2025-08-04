@@ -1,8 +1,11 @@
 FROM node:20-alpine
 
-COPY index.js /app/index.js
-COPY package.json /app/package.json
+WORKDIR /app
 
-RUN npm install
+COPY package.json .
+
+RUN npm cache clean --force && npm install
+
+COPY . .
 
 CMD ["node", "index.js"]
