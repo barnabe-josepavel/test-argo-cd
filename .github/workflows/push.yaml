@@ -81,4 +81,5 @@ jobs:
         run: |
           curl -X POST "${{ secrets.ARGOCD_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -d '{"force": true}'
