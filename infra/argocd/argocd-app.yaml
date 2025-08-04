@@ -11,7 +11,7 @@ spec:
   source:
     path: infra/kube
     repoURL: https://github.com/barnabe-josepavel/test-argo-cd
-    targetRevision: master
+    targetRevision: prod
   sources: []
   project: default
   syncPolicy:
