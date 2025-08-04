@@ -1,6 +1,7 @@
 name: Push to Prod
 
 on:
+  workflow_dispatch:
   pull_request_target:
     types: [closed]
     branches:
