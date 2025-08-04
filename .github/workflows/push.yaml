@@ -78,6 +78,6 @@ jobs:
     steps:
       - name: Trigger ArgoCD sync
         run: |
-          curl -X POST ${{ secrets.ARGOCD_WEBHOOK_URL }} \ 
-          -H "Content-Type: application/json" \ 
-          -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
+          curl -X POST "${{ secrets.ARGOCD_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
