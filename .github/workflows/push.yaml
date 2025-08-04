@@ -1,0 +1,74 @@
+name: Push to Prod
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - prod
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to the Container Registry
+        uses: docker/login-action@v3
+        with:
+          username: nologin
+          password: ${{ secrets.TF_VAR_SCALEWAY_SECRET_KEY }}
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: app
+          file: app/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_REGISTRY }}/app:latest
+  sync-secrets:
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: build-and-push-image
+    steps:
+      - name: Install SCW CLI
+        uses: scaleway/action-scw@v0
+        with:
+          save-config: true
+          export-config: true
+          version: v2.24.0
+          access-key: ${{ secrets.TF_VAR_SCALEWAY_ACCESS_KEY }}
+          secret-key: ${{ secrets.TF_VAR_SCALEWAY_SECRET_KEY }}
+          default-project-id: ${{ secrets.TF_VAR_SCALEWAY_ORGANIZATION_ID }}
+          default-organization-id: ${{ secrets.TF_VAR_SCALEWAY_PROJECT_ID }}
+      - name: Sync scw secrets to k8s
+        env:
+          NAMESPACE: app-nginx
+        run: |
+          NUMBER_OF_SECRETS=$(scw secret secret list -o json | jq "length")
+          SECRETS_UUIDS=$(scw secret secret list -o json | jq "[.[].id]")
+          SECRETS_NAMES=$(scw secret secret list -o json | jq "[.[].name]")
+          for i in $(seq 0 $((NUMBER_OF_SECRETS-1))); do
+            SECRET_UUID=$(echo "$SECRETS_UUIDS" | jq -r ".[$i]")
+            SECRET_NAME=$(echo "$SECRETS_NAMES" | jq -r ".[$i]")
+            SECRET_DATA=$(scw secret version access "$SECRET_UUID" revision=latest raw=true -o json)
+            kubectl create secret generic "$SECRET_NAME" \
+                --from-literal=MY_SECRET="$SECRET_DATA" \
+                --namespace="$NAMESPACE" \
+                --dry-run=client -o yaml | kubectl apply -f -
+          done
+  trigger-argocd-sync:
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: sync-secrets
+    steps:
+      - name: Trigger ArgoCD sync
+        run: |
+          curl -X POST ${{ secrets.ARGOCD_WEBHOOK_URL }} \ 
+          -H "Content-Type: application/json" \ 
+          -d "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
