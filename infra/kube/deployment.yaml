@@ -15,9 +15,16 @@ spec:
     spec:
       containers:
         - name: app-nginx
-          image: rg.fr-par.scw.cloud/test-custom-image-argo-cd/app:1.0.5
+          image: rg.fr-par.scw.cloud/test-custom-image-argo-cd/app:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
+          env:
+            - name: MY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: MY_SECRET
+                  key: MY_SECRET
           resources:
             requests:
               memory: 100Mi
