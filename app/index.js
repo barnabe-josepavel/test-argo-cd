@@ -3,7 +3,7 @@ import express from 'express';
 const app = express();
 
 app.get('/secret', (req, res) => {
-  res.send(process.env["my-secret"]);
+  res.send(process.env.ENV_VAR);
 });
 
 app.listen(80, () => {

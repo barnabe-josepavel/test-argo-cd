@@ -67,7 +67,7 @@ jobs:
             SECRET_DATA=$(scw secret version access $SECRET_UUID revision=latest raw=true)
             echo "Found secret data"
             kubectl create secret generic "$SECRET_NAME" \
-                --from-literal=MY_SECRET="$SECRET_DATA" \
+                --from-literal=env_var="$SECRET_DATA" \
                 --namespace="$NAMESPACE" \
                 --dry-run=client -o yaml | kubectl apply -f -
             echo "Created secret for $SECRET_NAME"
