@@ -1,8 +1,14 @@
 FROM node:20-alpine
 
-COPY index.js /app/index.js
-COPY package.json /app/package.json
+WORKDIR /app
 
-RUN npm install
+# Copy package.json first for better Docker layer caching
+COPY package.json .
 
-CMD ["node", "index.js"]
+# Clear npm cache and install dependencies
+RUN npm cache clean --force && npm install
+
+# Copy application code
+COPY . .
+
+CMD ["node", "app.js"]
