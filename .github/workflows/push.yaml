@@ -46,6 +46,9 @@ jobs:
           secret-key: ${{ secrets.TF_VAR_SCALEWAY_SECRET_KEY }}
           default-project-id: ${{ secrets.TF_VAR_SCALEWAY_ORGANIZATION_ID }}
           default-organization-id: ${{ secrets.TF_VAR_SCALEWAY_PROJECT_ID }}
+      - name: Install kubeconfig
+        run: | 
+          scw k8s kubeconfig install ${{ secrets.SCW_CLUSTER_ID }}
       - name: Sync scw secrets to k8s
         env:
           NAMESPACE: app-nginx
