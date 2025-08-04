@@ -41,7 +41,7 @@ jobs:
         with:
           save-config: true
           export-config: true
-          version: v2.24.0
+          version: v2.42.0
           access-key: ${{ secrets.TF_VAR_SCALEWAY_ACCESS_KEY }}
           secret-key: ${{ secrets.TF_VAR_SCALEWAY_SECRET_KEY }}
           default-project-id: ${{ secrets.TF_VAR_SCALEWAY_ORGANIZATION_ID }}
