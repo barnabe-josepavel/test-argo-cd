@@ -4,6 +4,8 @@ metadata:
   name: my-app
   namespace: argocd
   finalizers: []
+  annotations:
+    argocd.argoproj.io/sync-options: Force=true,Replace=true,Refresh=hard
 spec:
   destination:
     namespace: app-nginx
