@@ -82,25 +82,24 @@ jobs:
           curl -X POST "${{ secrets.ARGOCD_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-              curl -X POST "${{ secrets.ARGOCD_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-            -d '{
-              "appNamespace": "argocd",
-              "revision": "prod",
-              "prune": false,
-              "dryRun": false,
-              "strategy": {
-                "hook": {
-                  "force": true
-                }
-              },
-              "resources": null,
-              "syncOptions": {
-                "items": [
-                  "CreateNamespace=true",
-                  "PrunePropagationPolicy=foreground",
-                  "Replace=true"
-                ]
+            -d @- << 'EOF'
+          {
+            "appNamespace": "argocd",
+            "revision": "prod",
+            "prune": false,
+            "dryRun": false,
+            "strategy": {
+              "hook": {
+                "force": true
               }
-            }'
+            },
+            "resources": null,
+            "syncOptions": {
+              "items": [
+                "CreateNamespace=true",
+                "PrunePropagationPolicy=foreground",
+                "Replace=true"
+              ]
+            }
+          }
+          EOF
